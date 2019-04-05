@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct pessoa{
     char nome[20];
@@ -13,7 +14,7 @@ int* aux;
  int* i;
 
 void alocapont(void){
-    buffer = malloc(4*sizeof(int)+sizeof(struct pessoa));
+    buffer = malloc(sizeof(int)*4 + sizeof(struct pessoa));
     aux=(int*)buffer;
     countp = (int*)aux + 1;
     x = (int*)countp + 1;
@@ -23,14 +24,19 @@ void alocapont(void){
 }
 void realocapont(void){
     *countp += *i;
-    buffer = realloc(buffer,4*sizeof(int) + (*countp)*sizeof(struct pessoa));
-    aux = (int*)buffer;
+    buffer = realloc(buffer,(sizeof(int)*4 + sizeof(struct pessoa)*(*countp)));
+   /* aux = (int*)buffer;
     countp = (int*)aux + 1;
     x = (int*)countp + 1;
     i = (int*)x + 1;
-    p = (struct pessoa*)i + 1;
-    if((*countp)==(*i)) p2 = (struct pessoa*)i + 1;
-    else p2 = (struct pessoa*)p + (*i);
+    p = (struct pessoa*)i + 1;*/
+    if((*countp)==(*i)){
+		//p2 = (struct pessoa*)i + 1;
+		p2 = p;
+	}
+    else{
+		p2 = p + (*i);
+	}
 }
 void adiciona(void){
     for(*aux = 0;(*aux) < (*i);(*aux)++){
@@ -46,13 +52,17 @@ void adiciona(void){
 
 }
 void retira(void){
-	for(*aux = 0;(*aux) < (*countp) && (*i) != (p + (*aux))->mat;(*aux)++);
+	for(*aux = 0;(*aux) < (*countp) && (*x) != (p + (*aux))->mat;(*aux)++);
 	for(;(*aux) < (*countp) - 1;(*aux)++){
 			*(p + (*aux)) = *(p + ((*aux) + 1));
+			strcpy((p + (*aux))->nome,(p + ((*aux) + 1))->nome);
+			(p + (*aux))->idade = (p + ((*aux) + 1))->idade;
+			(p + (*aux))->mat = (p + ((*aux) + 1))->mat;
 	}
+	(*countp) = (*countp) - 1;
 }
 void busca(void){
-	for(*aux = 0;(*aux) < (*countp) && (*i) != (p + (*aux))->mat;(*aux)++);
+	for(*aux = 0;(*aux) < (*countp) && (*x) != (p + (*aux))->mat;(*aux)++);
 	if(*aux == *countp){
 		printf("\n\n pessoa nao encontrada!!");
 	}
@@ -77,31 +87,34 @@ void listar(void){
 int main(){
     alocapont();
     *countp = 0;
+	*x = 0;
     while((*x) != 5 ){
     	*i = 0;
     	*aux = 0;
-    	*x = 0;
 		printf("\n\n\tdiga uma opcao: ");
 		scanf("%d",x);
 
     	switch (*x) {
 
         	case 1:
-            	printf("diga a quantidade de pessoas que deseja adicionar a agenda: ");
+            	printf("\ndiga a quantidade de pessoas que deseja adicionar a agenda: ");
             	scanf("%d",i);
             	realocapont();
             	adiciona();
             	break;
         	case 2:
-        		printf("diga o numero de matricula da pessoa que deseja remover da agenda: ");
-        		scanf("%d",i);
+        		printf("\ndiga o numero de matricula da pessoa que deseja remover da agenda: ");
+        		scanf("%d",x);
         		retira();
+				//buffer = realloc(buffer,(sizeof(int)*4 + sizeof(struct pessoa)*(*countp)));
         		realocapont();
+				*x = 0;
             	break;
         	case 3:
-        		printf("diga o numero de matricula da pessoa desejada: ");
-        		scanf("%d",i);
+        		printf("\ndiga o numero de matricula da pessoa desejada: ");
+        		scanf("%d",x);
         		busca();
+				*x = 0;
             	break;
         	case 4:
         		listar();
