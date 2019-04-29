@@ -4,19 +4,20 @@
 
 void* buffer;
 int* aux;
-int* countp; 
-int* x; 
+int* countp;
+int* x;
 int* i;
 
 struct pessoa* p;
 struct auxiliar* pa;
 
 struct pessoa{
-    char nome[20];
+    char *nome; //nao posso mais fazer assim, tenho que criar ponterios pra char que mandem meus nomes pro final do meu buffer.
     unsigned int idade,mat;
     };
 struct auxiliar{
-	char nome[20];
+	char *nome;
+	unsigned int idade,mat;
 };
 
 void alocapont(void);
@@ -25,19 +26,7 @@ void adiciona(void);
 void retira(void);
 void busca(void);
 void listar(void);
-/*void adiciona(void){
-	for(*aux = 1; *aux < *countp; (*aux)=(*aux)+1){
-		p2 = p2 + 1;
-	}
-	printf("\n\t pessoa %d\n",*countp);
-	printf("\ndiga o nome: ");
-	scanf("%s",&p2->nome);
-	printf("diga a idade: ");
-	scanf("%d",&p2->idade);
-    printf("diga o numero de matricula: ");
-	scanf("%d",&p2->mat);
-
-}*/
+void ordena(void);
 
 int main(){
     alocapont();
@@ -54,7 +43,7 @@ int main(){
 		printf("\n-- 5 -- sair");
 		printf("\n\n\tdiga uma opcao: ");
 		scanf("%d",x);
-		
+
     	switch (*x) {
         	case 1:
 				(*countp) = (*countp) + 1;
@@ -76,7 +65,7 @@ int main(){
         			scanf("%d",i);
 					retira();
 				}
-				*x = 0;				
+				*x = 0;
             	break;
         	case 3:
 			    printf("\n\t--escolha tipo de busca--\n");
@@ -93,9 +82,10 @@ int main(){
         			scanf("%d",i);
 					busca();
 				}
-				*x = 0;	
+				*x = 0;
             	break;
         	case 4:
+                ordena();
         		listar();
             	break;
         	case 5:
@@ -104,7 +94,7 @@ int main(){
 				printf("\n\nopcao invalida!!\n\n");
     	}
     }
-    
+
     free(buffer);
 
     return 0;
@@ -138,7 +128,7 @@ void adiciona(void){
     scanf("%d",&(p + (*aux)) ->mat);
 }
 
-void retira(void){	
+void retira(void){
 	if(*i == 0){
 		for(*aux = 0;(*aux) < (*countp) && strcmp(pa->nome,(p + (*aux))->nome) != 0 ;(*aux)++);
 	}
@@ -190,4 +180,23 @@ void listar(void){
     	   	printf("%d\n",(p + (*aux))->mat);
    		}
 	}
+}
+
+void ordena(void){
+for (*aux=1; *aux<*countp ; (*aux)++) {
+    *i = (*aux) - 1;
+    strcpy(pa->nome,(p + (*aux))->nome);
+    pa->idade = (p + (*aux))->idade;
+    pa->mat = (p + (*aux))->mat;
+
+    while ( (*i >= 0) && (pa->mat < (p + (*i))->mat) ) {
+        strcpy((p + ((*i)+1))->nome,(p + (*i))->nome);
+        (p + ((*i)+1))->idade = (p + (*i))->idade;
+        (p + ((*i)+1))->mat = (p + (*i))->mat;
+        (*i)--;
+    }
+    strcpy((p + ((*i)+1))->nome,pa->nome);
+    (p + ((*i)+1))->idade = pa->idade;
+    (p + ((*i)+1))->mat = pa->mat;
+    }
 }
