@@ -112,21 +112,34 @@ void realocapont(void){
 	pa = (struct auxiliar*)(i + 1);
     p = (struct pessoa*)(pa + 1);
 	allnames = (char*)(p + (*countp));
-	*allnames = '.';
+	p->nome = allnames;
+	(*i) = 1;
 	for((*aux)=0 ; (*aux)<strlen(allnames) ; (*aux)++){
-		if(*(allnames + (*aux)) == '.'){
-			(p + (*i))->nome = *(allnames +(*aux));
+		if(*(allnames + (*aux)) == '\0'){
+			(p + (*i))->nome = (allnames +((*aux)+1));
 			(*i)++;
 		}
 	}
 }
 
 void adiciona(void){
+	(*x) = 0;
 	(*aux) = (*countp) - 1;
     printf("\n\t pessoa %d\n",(*countp));
     printf("\ndiga o nome: ");
     scanf("%s",pa->nome);
-	strcat(allnames,pa->nome);
+	if((*countp) == 1){
+		strcpy(allnames,pa->nome);
+	}
+	else{
+		for((*i) = 0; (*i) < strlen(allnames); (*i)++){
+			if(*(allnames + (*i)) == '\0') (*x)++;
+			if((*x) == (*countp)){
+				(*i)++;
+				strcpy((allnames+(*i)),pa->nome);
+			}
+		}
+	}
     printf("diga a idade: ");
     scanf("%d",&(p + (*aux))->idade);
     printf("diga o numero de matricula: ");
