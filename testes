@@ -47,6 +47,9 @@ int main(){
 		
     	switch (*x) {
         	case 1:
+				printf("\n\t pessoa %d\n",(*countp));
+			    printf("\ndiga o nome: ");
+    			scanf("%s",pa->nome);
 				(*countp) = (*countp) + 1;
             	realocapont();
             	adiciona();
@@ -108,41 +111,6 @@ void alocapont(void){
 	cname = i + 1;
 	pa = (struct auxiliar*)(cname + 1);
 }
-/*void realocapont(void){
-	if(*countp == 1){
-		*cname = strlen(pa->nome) + 1;
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
-		aux = buffer;
-    	countp = aux + 1;
-    	x = countp + 1;
-    	i = x + 1;
-		cname = i + 1;
-		pa = (struct auxiliar*)(cname + 1);
- 	    p = (struct pessoa*)(pa + 1);
-		allnames = (char*)(p + (*countp));
-		p->nome = allnames;
-	}
-    else{
-		*cname += strlen(pa->nome) + 1;
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
-    	aux = buffer;
-    	countp = aux + 1;
-    	x = countp + 1;
-    	i = x + 1;
-		cname = i + 1;
-		pa = (struct auxiliar*)(cname + 1);
-    	p = (struct pessoa*)(pa + 1);
-		allnames = (char*)(p + (*countp));
-		p->nome = allnames;
-		(*i) = 1;
-		for((*aux)=0 ; (*aux)<(*cname) ; (*aux)++){
-			if(*(allnames + (*aux)) == '\0'){
-				(p + (*i))->nome = (allnames +((*aux)+1));
-				(*i)++;
-			}
-		}
-	}
-}*/
 void realocapont(void){
 	if(*countp == 1){
 		*cname = strlen(pa->nome) + 1;
@@ -157,21 +125,19 @@ void realocapont(void){
 		allnames = (char*)(p + (*countp));
 		p->nome = allnames;
 	}
-    else{
-		*cname += strlen(pa->nome) + 1;
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
+	else{
+		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname + strlen(pa->nome) + 1)));
     	aux = buffer;
     	countp = aux + 1;
     	x = countp + 1;
     	i = x + 1;
 		cname = i + 1;
 		pa = (struct auxiliar*)(cname + 1);
-    	p = (struct pessoa*)(pa + 1);
-		allnames = (char*)(pa + sizeof(struct pessoa)*(*countp) + (*cname));
-		for((*i)=(*cname) ; (*i)>0 ; (*i)--){
-			*(allnames + ((*i) + 9)) = *(allnames + (*i));
-		}
 		p = (struct pessoa*)(pa + 1);
+		allnames = (char*)(p + ((*countp)-1));
+		for(*i=0 ; *i < *cname ; (*i)++){
+			*(allnames + ((*i) + sizeof(struct pessoa))) = *(allnames + (*i));
+		}
 		allnames = (char*)(p + (*countp));
 		p->nome = allnames;
 		(*i) = 1;
@@ -187,20 +153,20 @@ void realocapont(void){
 void adiciona(void){
 	(*x) = 0;
 	(*aux) = (*countp) - 1;
-    printf("\n\t pessoa %d\n",(*countp));
-    printf("\ndiga o nome: ");
-    scanf("%s",pa->nome);
 	if((*countp) == 1){
 		strcpy(allnames,pa->nome);
 	}
 	else{
 		for((*i) = 0; (*i) < (*cname); (*i)++){
-			if(*(allnames + (*i)) == '\0') (*x)++;
-			if((*x) == (*countp)){
-				(*i)++;
-				strcpy((allnames+(*i)),pa->nome);
+			if(*(allnames + (*i)) == '\0'){ 
+				(*x)++;
+				if((*x) == (*aux)){
+					(*i)++;
+					strcpy((allnames+(*i)),pa->nome);
+				}
 			}
 		}
+		*cname += strlen(pa->nome) + 1;
 	}
     printf("diga a idade: ");
     scanf("%d",&(p + (*aux))->idade);
