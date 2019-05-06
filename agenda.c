@@ -12,11 +12,11 @@ struct pessoa* p;
 struct auxiliar* pa;
 
 struct pessoa{
-    char *nome; //nao posso mais fazer assim, tenho que criar ponterios pra char que mandem meus nomes pro final do meu buffer.
+    char nome[20]; 
     unsigned int idade,mat;
     };
 struct auxiliar{
-	char *nome;
+	char nome[20];
 	unsigned int idade,mat;
 };
 
@@ -26,7 +26,8 @@ void adiciona(void);
 void retira(void);
 void busca(void);
 void listar(void);
-void ordena(void);
+void insertionSort(void);
+void selectionSort(void);
 
 int main(){
     alocapont();
@@ -85,8 +86,10 @@ int main(){
 				*x = 0;
             	break;
         	case 4:
-                ordena();
+               // insertionSort();
+			   selectionSort();
         		listar();
+				*x = 0;
             	break;
         	case 5:
             	break;
@@ -182,7 +185,7 @@ void listar(void){
 	}
 }
 
-void ordena(void){
+void insertionSort(void){
 for (*aux=1; *aux<*countp ; (*aux)++) {
     *i = (*aux) - 1;
     strcpy(pa->nome,(p + (*aux))->nome);
@@ -199,4 +202,28 @@ for (*aux=1; *aux<*countp ; (*aux)++) {
     (p + ((*i)+1))->idade = pa->idade;
     (p + ((*i)+1))->mat = pa->mat;
     }
+}
+void selectionSort(void){
+	for(*aux=0 ; *aux<(*countp-1) ; (*aux)++){
+		*x = *aux;
+		for(*i=*aux + 1 ; *i<*countp ; (*i)++){
+			if((p + (*i))->mat < (p + (*x))->mat){
+				*x = *i;
+			}
+		}
+		if(*aux != *x){
+		    strcpy(pa->nome,(p + (*aux))->nome);
+    		pa->idade = (p + (*aux))->idade;
+    		pa->mat = (p + (*aux))->mat;
+
+		    strcpy((p + (*aux))->nome,(p + (*x))->nome);
+    		(p + (*aux))->idade = (p + (*x))->idade;
+    		(p + (*aux))->mat = (p + (*x))->mat;
+
+		    strcpy((p + (*x))->nome,pa->nome);
+    		(p + (*x))->idade = pa->idade;
+    		(p + (*x))->mat = pa->mat;
+
+		}
+	}
 }
