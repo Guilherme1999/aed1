@@ -47,7 +47,7 @@ int main(){
 		
     	switch (*x) {
         	case 1:
-				printf("\n\t pessoa %d\n",(*countp));
+				printf("\n\t pessoa %d\n",(*countp) + 1);
 			    printf("\ndiga o nome: ");
     			scanf("%s",pa->nome);
 				(*countp) = (*countp) + 1;
@@ -135,7 +135,7 @@ void realocapont(void){
 		pa = (struct auxiliar*)(cname + 1);
 		p = (struct pessoa*)(pa + 1);
 		allnames = (char*)(p + ((*countp)-1));
-		for(*i=0 ; *i < *cname ; (*i)++){
+		for(*i= *cname-1; *i >= 0 ; (*i)--){
 			*(allnames + ((*i) + sizeof(struct pessoa))) = *(allnames + (*i));
 		}
 		allnames = (char*)(p + (*countp));
@@ -172,29 +172,57 @@ void adiciona(void){
     scanf("%d",&(p + (*aux))->idade);
     printf("diga o numero de matricula: ");
     scanf("%d",&(p + (*aux))->mat);
+
 }
 
 void retira(void){	
+	*x = 0;
 	if(*i == 0){
-		for(*aux = 0;(*aux) < (*countp) && strcmp(pa->nome,(p + (*aux))->nome) != 0 ;(*aux)++);
+		for(*aux = 0;(*aux) < (*countp) && strcmp(pa->nome,(p + (*aux))->nome) != 0 ;(*aux)++)
+		(*x) += strlen((p +(*aux))->nome) + 1;
 	}
 	else{
-		for(*aux = 0;(*aux) < (*countp) && (*i) != (p + (*aux))->mat;(*aux)++);
+		for(*aux = 0;(*aux) < (*countp) && (*i) != (p + (*aux))->mat;(*aux)++)
+		(*x) += strlen((p +(*aux))->nome) + 1;
 	}
 	if(*aux == *countp){
 		printf("\n\n pessoa nao encontrada!!");
 	}
 	else{
+		allnames = (p + (*aux))->nome;
+		*x = *cname - *x; 
+		for(*i = 0 ; (*i + strlen((p + (*aux))->nome) + 1)  <= *x ; (*i)++){
+			*(allnames + (*i)) = *(allnames + (*i) + strlen((p + (*aux))->nome) + 1);
+		}
+		(*cname) -= strlen((p + (*aux))->nome) + 1;
 		for(;(*aux) < (*countp) - 1;(*aux)++){
 			*(p + (*aux)) = *(p + ((*aux) + 1));
-			strcpy((p + (*aux))->nome,(p + ((*aux) + 1))->nome);
 			(p + (*aux))->idade = (p + ((*aux) + 1))->idade;
 			(p + (*aux))->mat = (p + ((*aux) + 1))->mat;
 		}
 		(*countp) = (*countp) - 1;
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 4*sizeof(int) + (*countp)*sizeof(struct pessoa)));
+		//acho que o problema ta daqui pra baixo e tem a haver com passar a struct que vou remover pro final
+		p = (p + *(countp)); 
+		p = (struct pessoa*)(allnames + (*cname));
+		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
+		aux = buffer;
+    	countp = aux + 1;
+    	x = countp + 1;
+    	i = x + 1;
+		cname = i + 1;
+		pa = (struct auxiliar*)(cname + 1);
+ 	    p = (struct pessoa*)(pa + 1);
+		allnames = (char*)(p + (*countp));
+		p->nome = allnames;
+		/*for((*aux)=0 ; (*aux)<(*cname)-1 ; (*aux)++){
+			if(*(allnames + (*aux)) == '\0'){
+				(p + (*i))->nome = (allnames +((*aux)+1));
+				(*i)++;
+			}
+		}*/
 	}
 }
+
 
 void busca(void){
 	if(*i == 0){
