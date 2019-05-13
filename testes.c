@@ -112,34 +112,22 @@ void alocapont(void){
 	pa = (struct auxiliar*)(cname + 1);
 }
 void realocapont(void){
-	if(*countp == 1){
-		*cname = strlen(pa->nome) + 1;
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
-		aux = buffer;
-    	countp = aux + 1;
-    	x = countp + 1;
-    	i = x + 1;
-		cname = i + 1;
-		pa = (struct auxiliar*)(cname + 1);
- 	    p = (struct pessoa*)(pa + 1);
-		allnames = (char*)(p + (*countp));
-		p->nome = allnames;
-	}
-	else{
-		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname + strlen(pa->nome) + 1)));
-    	aux = buffer;
-    	countp = aux + 1;
-    	x = countp + 1;
-    	i = x + 1;
-		cname = i + 1;
-		pa = (struct auxiliar*)(cname + 1);
-		p = (struct pessoa*)(pa + 1);
+	buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname + strlen(pa->nome) + 1)));
+	aux = buffer;
+    countp = aux + 1;
+    x = countp + 1;
+    i = x + 1;
+	cname = i + 1;
+	pa = (struct auxiliar*)(cname + 1);
+ 	p = (struct pessoa*)(pa + 1);
+	if(*countp > 1){
 		allnames = (char*)(p + ((*countp)-1));
 		for(*i= *cname-1; *i >= 0 ; (*i)--){
 			*(allnames + ((*i) + sizeof(struct pessoa))) = *(allnames + (*i));
 		}
-		allnames = (char*)(p + (*countp));
-		p->nome = allnames;
+	}
+	allnames = (char*)(p + (*countp));
+	p->nome = allnames;
 		(*i) = 1;
 		for((*aux)=0 ; (*aux)<(*cname) ; (*aux)++){
 			if(*(allnames + (*aux)) == '\0'){
@@ -147,7 +135,6 @@ void realocapont(void){
 				(*i)++;
 			}
 		}
-	}
 }
 
 void adiciona(void){
@@ -156,18 +143,17 @@ void adiciona(void){
 	if((*countp) == 1){
 		strcpy(allnames,pa->nome);
 	}
-	else{
-		for((*i) = 0; (*i) < (*cname); (*i)++){
-			if(*(allnames + (*i)) == '\0'){ 
-				(*x)++;
-				if((*x) == (*aux)){
-					(*i)++;
-					strcpy((allnames+(*i)),pa->nome);
-				}
+	for((*i) = 0; (*i) < (*cname); (*i)++){
+		if(*(allnames + (*i)) == '\0'){ 
+			(*x)++;
+			if((*x) == (*aux)){
+				(*i)++;
+				strcpy((allnames+(*i)),pa->nome);
 			}
 		}
-		*cname += strlen(pa->nome) + 1;
 	}
+	
+	*cname += strlen(pa->nome) + 1;
     printf("diga a idade: ");
     scanf("%d",&(p + (*aux))->idade);
     printf("diga o numero de matricula: ");
@@ -207,12 +193,12 @@ void retira(void){
 		} 
 		buffer = realloc(buffer,(sizeof(struct auxiliar) + 5*sizeof(int) + (*countp)*sizeof(struct pessoa) + sizeof(char)*(*cname)));
 		aux = buffer;
-    	countp = aux + 1;
-    	x = countp + 1;
-    	i = x + 1;
+    		countp = aux + 1;
+    		x = countp + 1;
+    		i = x + 1;
 		cname = i + 1;
 		pa = (struct auxiliar*)(cname + 1);
- 	    p = (struct pessoa*)(pa + 1);
+ 	    	p = (struct pessoa*)(pa + 1);
 		allnames = (char*)(p + (*countp));
 		p->nome = allnames;
 		(*i) = 1;
