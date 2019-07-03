@@ -33,15 +33,17 @@ pont* grandparent(pont* root)
 
 pont* uncle(pont* root)
 {
-    if((*root)->parent->parent != NULL)
+    pont* g;
+    g = grandparent(root);
+    if(*g != NULL)
     {
-        if((*root)->parent->parent->right != NULL && (*root)->parent->left == (*root))
+        if((*root)->parent == (*g)->left)
         {
-            return &(*root)->parent->parent->right;
+            return &(*g)->right;
         }
-        if((*root)->parent->parent->left != NULL && (*root)->parent->right == (*root))
+        if((*root)->parent == (*g)->right)
         {
-            return &(*root)->parent->parent->left;
+            return &(*g)->left;
         }
     }
     return NULL;
@@ -85,6 +87,7 @@ void rotation_left(pont* root)
 {
     pont aux;
     aux = (*root)->right;
+    aux->right->parent = (*root);
     (*root)->right = aux->left;
     aux->parent = (*root)->parent;
     (*root)->parent = aux;
@@ -96,6 +99,10 @@ void rotation_right(pont* root)
 {
     pont aux;
     aux = (*root)->left;
+    if(aux->right != NULL)
+    {
+        aux->right->parent = (*root);
+    }
     (*root)->left = aux->right;
     aux->parent = (*root)->parent;
     (*root)->parent = aux;
@@ -107,17 +114,15 @@ void case5(pont* root)
 {
     pont* g;
     g = grandparent(root);
+    change_color(g);
     change_color(&(*root)->parent);
-    change_color(root);
-    if((*root)->parent->right == (*root))
+    if((*g)->right != NULL && (*g)->right->right == (*root))
     {
-        change_color(&(*root)->right);
-        rotation_left(&(*root)->parent);
+        rotation_left(g);
     }
-    if((*root)->parent->left == (*root))
+    if((*g)->left != NULL && (*g)->left->left == (*root))
     {
-        change_color(&(*root)->left);
-        rotation_right(&(*root)->parent);
+        rotation_right(g);
     }
 }
 
@@ -128,14 +133,16 @@ void case4(pont* root)
     if(color_node(*u) == black && color_node((*root)->parent) == red)
     {
         g = grandparent(root);
-        if(root == &(*g)->left->right)
+        if((*g)->left != NULL && *root == (*g)->left->right)
         {
             rotation_left(&(*root)->parent);
+            *root = (*root)->left;
             case5(root);
         }
-        if(root == &(*g)->right->left)
+        if((*g)->right != NULL && *root == (*g)->right->left)
         {
             rotation_right(&(*root)->parent);
+            *root = (*root)->right;
         }
     }
     case5(root);
@@ -145,18 +152,18 @@ void case3(pont* root)
 {
     pont* g,* u;
     u = uncle(root);
-    if(u)
+    if(*u != NULL && color_node(*u) == red && color_node((*root)->parent) == red) 
     {
-        g = grandparent(root);
-        if(color_node(*u) == red && color_node((*root)->parent) == red)
-        {  
-            change_color(&(*root)->parent);
-            change_color(u);
-            change_color(g);
-            case1(g);
-        }
+        g = grandparent(root); 
+        change_color(&(*root)->parent);
+        change_color(u);
+        change_color(g);
+        case1(g);
     }
+    else
+    {
     case4(root);  
+    }
 }
 
 void case2(pont* root)
@@ -195,20 +202,20 @@ int insertion(pont* root, int data)
     }
     if(data < (*root)->data)
     {
-        insertion(&(*root)->left, data);
-        (*root)->left->parent = *root;
-        if(case1(&(*root)->left))
+        if(insertion(&(*root)->left, data))
         {
+            (*root)->left->parent = *root;
+            case1(&(*root)->left);
             return 0;
         }
         return 0;
     }
     if(data > (*root)->data)
     {
-        insertion(&(*root)->right, data);
-        (*root)->right->parent = *root;
-        if(case1(&(*root)->left))
+        if(insertion(&(*root)->right, data))
         {
+            (*root)->right->parent = *root;
+            case1(&(*root)->left);
             return 0;
         }
         return 0;
@@ -222,6 +229,7 @@ int main()
     pont* root = NULL;
     root = reset(root);
     insertion(root,8);
+    case1(root);
     insertion(root,6);
     insertion(root,10);
     insertion(root,9);
