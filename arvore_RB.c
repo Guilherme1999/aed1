@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define  black 1 
+#define  black 1
 #define  red 0
 
 typedef struct node* pont;
@@ -99,15 +99,21 @@ void rotation_right(pont* root)
 {
     pont aux;
     aux = (*root)->left;
+    (*root)->left = aux->right;
     if(aux->right != NULL)
     {
         aux->right->parent = (*root);
     }
-    (*root)->left = aux->right;
     aux->parent = (*root)->parent;
-    (*root)->parent = aux;
+    if((*root) == (*root)->parent->left)
+    {
+        (*root)->parent->left = aux;
+    }
+    else{
+        (*root)->parent->right = aux;
+    }
     aux->right = (*root);
-    (*root) = aux;
+    (*root)->parent = aux;
 }
 
 void case5(pont* root)
@@ -152,9 +158,9 @@ void case3(pont* root)
 {
     pont* g,* u;
     u = uncle(root);
-    if(*u != NULL && color_node(*u) == red && color_node((*root)->parent) == red) 
+    if(*u != NULL && color_node(*u) == red && color_node((*root)->parent) == red)
     {
-        g = grandparent(root); 
+        g = grandparent(root);
         change_color(&(*root)->parent);
         change_color(u);
         change_color(g);
@@ -162,7 +168,7 @@ void case3(pont* root)
     }
     else
     {
-    case4(root);  
+    case4(root);
     }
 }
 
